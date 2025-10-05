@@ -1,6 +1,7 @@
 import pygame
 import time
 import random
+pygame.font.init()
 
 # Initialize Pygame
 pygame.init()
@@ -9,68 +10,64 @@ pygame.init()
 window = pygame.display.set_mode((1000, 800))
 pygame.display.set_caption("The Space")
 
+# pygame background
+bg = pygame.transform.scale(pygame.image.load("cosmos_bg.jpg"), (1000, 800))
+
+# font
+font = pygame.font.SysFont("comicsans", 30)
+
+# player
+player_WD = 40
+player_HG = 60
+player_vell = 5
+
+# clock
+clock = pygame.time.Clock()
+
+# start time
+start_time = time.time()
 
 
-#pygame background
-bg = pygame.transform.scale(pygame.image.load("cosmos_bg.jpg"),(1000,800))
-
-#pygame draw
-def draw(player):
-    window.blit(bg,(0,0))
-    pygame.draw.rect(window,"red",player)
+# draw function
+def draw(player, elapsed_time):
+    window.blit(bg, (0, 0))  # draw background first
+    pygame.draw.rect(window, "red", player)  # draw player
+    time_text = font.render(f"time: {round(elapsed_time)}s", 1, "white")  # timer
+    window.blit(time_text, (10, 10))  # draw timer on top
     pygame.display.update()
 
 
-#player
-player_WD = 40
-player_HG = 60
-player_vell = 1
-
-
-clock = pygame.time.Clock()
-
-
-# Main game loop
+# main game loop
 def main():
     run = True
-    clock.tick(60)
-    
-    player = pygame.Rect(200, 800 - player_HG,player_HG,player_WD)
 
-
-
-
+    player = pygame.Rect(200, 800 - player_HG, player_WD, player_HG)
 
     while run:
-
-
+        clock.tick(60)  # FPS
+        elapsed_time = time.time() - start_time  # update timer every frame
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 break
-        
-        
-        
-        draw(player)
-        
-        keys = pygame.key.get_pressed()
 
-        #moving function for player
+        # update screen
+        draw(player, elapsed_time)
+
+        # player movement
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_a] and player.x - player_vell >= 0:
             player.x -= player_vell
-        if keys[pygame.K_d] and player.x + player_vell + player_WD <= 980:
-            player.x += player_vell   
+        if keys[pygame.K_d] and player.x + player_vell + player_WD <= 1000:
+            player.x += player_vell
         if keys[pygame.K_w] and player.y - player_vell >= 0:
             player.y -= player_vell
-        if keys[pygame.K_s] and player.y + player_vell + player_WD <= 800:
+        if keys[pygame.K_s] and player.y + player_vell + player_HG <= 800:
             player.y += player_vell
-
 
     pygame.quit()
 
 
 if __name__ == "__main__":
     main()
-
-    
